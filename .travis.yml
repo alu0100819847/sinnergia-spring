@@ -8,3 +8,5 @@ notifications:
   email:
     recipients:
       - alu0100819847@ull.edu.es
+before_install:
+  - chmod +x mvnw
