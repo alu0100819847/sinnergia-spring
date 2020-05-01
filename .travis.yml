@@ -10,3 +10,6 @@ notifications:
       - alu0100819847@ull.edu.es
 before_install:
   - chmod +x mvnw
+script:
+  #Test unitario y de integracion en perfil DEV, con cobertura
+  - mvn verify sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=sinnergia -Dsonar.login=$SONAR
