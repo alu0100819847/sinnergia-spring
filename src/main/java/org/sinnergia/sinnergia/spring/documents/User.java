@@ -76,6 +76,10 @@ public class User {
         this.surname = surname;
     }
 
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     public String getRoles() {
         return this.roles;
     }

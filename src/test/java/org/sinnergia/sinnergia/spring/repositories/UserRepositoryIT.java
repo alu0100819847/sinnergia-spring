@@ -2,7 +2,7 @@ package org.sinnergia.sinnergia.spring.repositories;
 
 
 import org.junit.jupiter.api.Test;
-import org.sinnergia.sinnergia.spring.TestConfig;
+import org.sinnergia.sinnergia.spring.config.TestConfig;
 import org.sinnergia.sinnergia.spring.documents.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -107,8 +107,6 @@ public class UserRepositoryIT {
         this.removeUser(user2);
         this.removeUser(user3);
     }
-
-
 
     public void removeUser(User user){
         StepVerifier
