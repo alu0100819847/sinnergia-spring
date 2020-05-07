@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = SinnergiaSpringApplication.class)
+@SpringBootTest
 public @interface TestConfig {
 
 }
