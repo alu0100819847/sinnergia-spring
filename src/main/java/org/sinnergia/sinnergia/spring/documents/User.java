@@ -84,9 +84,6 @@ public class User {
         return this.roles;
     }
 
-    public void setType(String roles) {
-        this.roles = roles;
-    }
 
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
