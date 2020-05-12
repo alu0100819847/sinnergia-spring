@@ -1,11 +1,9 @@
-package org.sinnergia.sinnergia.spring.api_rest_controller;
+package org.sinnergia.sinnergia.spring.api_rest_controllers;
 
 import org.junit.jupiter.api.Test;
-import org.sinnergia.sinnergia.spring.api_rest_controllers.UserResource;
 import org.sinnergia.sinnergia.spring.config.ApiTestConfig;
 import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
