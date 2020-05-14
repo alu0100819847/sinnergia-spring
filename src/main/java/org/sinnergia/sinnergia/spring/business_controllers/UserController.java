@@ -26,7 +26,6 @@ public class UserController {
         return Mono.when(this.noExistEmail(userLandingDto.getEmail()))
                 .then(this.userRepository.save(user))
                 .map(userSaved -> new UserLandingDto(userSaved.getEmail(), userSaved.getRoles()));
-
     }
 
     public Mono<Void> noExistEmail(String email){
