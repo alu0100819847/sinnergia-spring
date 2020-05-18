@@ -1,6 +1,9 @@
 package org.sinnergia.sinnergia.spring.dto;
 
+import org.sinnergia.sinnergia.spring.documents.Role;
+
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 
 public class UserLandingDto {
 
@@ -8,9 +11,9 @@ public class UserLandingDto {
     private String email;
 
     @NotNull
-    private String roles;
+    private Role[] roles;
 
-    public UserLandingDto(@NotNull String email, @NotNull String roles) {
+    public UserLandingDto(@NotNull String email, @NotNull Role[] roles) {
         this.email = email;
         this.roles = roles;
     }
@@ -23,11 +26,11 @@ public class UserLandingDto {
         this.email = email;
     }
 
-    public String getRoles() {
+    public Role[] getRoles() {
         return roles;
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(Role[] roles) {
         this.roles = roles;
     }
 
@@ -35,7 +38,7 @@ public class UserLandingDto {
     public String toString() {
         return "UserLandingDto{" +
                 "email='" + email + '\'' +
-                ", roles='" + roles + '\'' +
+                ", roles='" + Arrays.toString(roles) + '\'' +
                 '}';
     }
 }

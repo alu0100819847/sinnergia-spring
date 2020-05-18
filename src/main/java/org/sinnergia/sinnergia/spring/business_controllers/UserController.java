@@ -1,21 +1,32 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
 
+import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.documents.User;
+import org.sinnergia.sinnergia.spring.dto.JwtDto;
 import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
+import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
+import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
 import org.sinnergia.sinnergia.spring.exceptions.ConflictException;
+import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
 import org.sinnergia.sinnergia.spring.repositories.UserRepository;
+import org.sinnergia.sinnergia.spring.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
 
 @Controller
 public class UserController {
     private UserRepository userRepository;
+    private JwtService jwtService;
 
     @Autowired
-    public UserController(UserRepository userRepository){
+    public UserController(UserRepository userRepository, JwtService jwtService){
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
 
@@ -28,8 +39,51 @@ public class UserController {
                 .map(userSaved -> new UserLandingDto(userSaved.getEmail(), userSaved.getRoles()));
     }
 
+
+    public Mono<JwtDto> login(UserLoginDto userLoginDto){
+        return Mono
+                .when(this.checkCredential(userLoginDto))
+                .then(this.getToken(userLoginDto));
+    }
+
+    public Mono<JwtDto> getToken(UserLoginDto userLoginDto) {
+        return this.userRepository.findOneByEmail(userLoginDto.getEmail()).map(
+                user -> {
+                        String[] roles = Arrays.stream(user.getRoles()).map(Role::name).toArray(String[]::new);
+                        return new JwtDto(jwtService.createToken(roles, user.getEmail()));
+                }
+        );
+    }
+
+    public Mono<Void> checkCredential(UserLoginDto userLoginDto){
+        return this.findUserAssuredForLogin(userLoginDto.getEmail())
+                .handle((last, sink) -> {
+                    if(new BCryptPasswordEncoder().matches(userLoginDto.getPassword(),last.getPassword())) {
+                        sink.complete();
+                    }
+                    else {
+                        sink.error(new CredentialException("User or Password incorrect."));
+                    }
+                }
+        );
+    }
+
+    public Mono<Void> register(UserRegisterDto userRegisterDto){
+        User user = new User();
+        user.setEmail(userRegisterDto.getEmail());
+        user.setPassword(userRegisterDto.getPassword());
+        return Mono.when(this.noExistEmail(userRegisterDto.getEmail())).then(this.userRepository.save(user)).then();
+    }
+
     public Mono<Void> noExistEmail(String email){
         return this.userRepository.findOneByEmail(email)
                 .handle((result, sink) -> sink.error(new ConflictException("Email already exists.")));
+    }
+
+    public Mono<UserLoginDto> findUserAssuredForLogin(String email){
+        return this.userRepository.findOneByEmail(email)
+                .switchIfEmpty(Mono.error(new CredentialException("User or Password incorrect.")))
+                .map(user -> new UserLoginDto(user.getEmail(), user.getPassword()));
+
     }
 }

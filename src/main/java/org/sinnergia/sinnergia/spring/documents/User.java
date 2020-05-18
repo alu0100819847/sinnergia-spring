@@ -1,6 +1,9 @@
 package org.sinnergia.sinnergia.spring.documents;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -23,12 +26,13 @@ public class User {
 
     private String surname;
 
-    private String roles;
+    private Role[] roles;
 
     private LocalDateTime registrationDate;
 
     public User() {
         this.registrationDate = LocalDateTime.now();
+        this.roles = new Role[]{Role.CUSTOMER};
     }
 
     public String getId() {
@@ -50,7 +54,6 @@ public class User {
     public String getPassword() {
         return password;
     }
-
 
     public void setPassword(String password) {
         if (password == null) {
@@ -76,14 +79,13 @@ public class User {
         this.surname = surname;
     }
 
-    public void setRoles(String roles) {
+    public Role[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Role[] roles) {
         this.roles = roles;
     }
-
-    public String getRoles() {
-        return this.roles;
-    }
-
 
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
