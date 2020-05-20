@@ -10,6 +10,7 @@ public class ArticleBasicDto {
 
     private Integer stock;
 
+
     public ArticleBasicDto() {}
 
     public ArticleBasicDto(String name, BigDecimal price, Integer stock) {
@@ -41,6 +42,7 @@ public class ArticleBasicDto {
     public void setStock(Integer stock) {
         this.stock = stock;
     }
+
 
     @Override
     public String toString() {

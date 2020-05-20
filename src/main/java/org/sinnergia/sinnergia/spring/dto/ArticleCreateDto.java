@@ -1,32 +1,30 @@
-package org.sinnergia.sinnergia.spring.documents;
+package org.sinnergia.sinnergia.spring.dto;
 
 import org.bson.types.Binary;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Document
-public class Article {
+public class ArticleCreateDto implements Serializable {
 
-    @Id
-    private String id;
-
+    @NotNull
     private String name;
 
     private BigDecimal price;
 
     private Integer stock;
 
-    private Binary image;
 
-    public Article() {}
-
-    public String getId() {
-        return id;
+    public ArticleCreateDto() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public ArticleCreateDto(String name, BigDecimal price, Integer stock) {
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
     }
 
     public String getName() {
@@ -53,22 +51,13 @@ public class Article {
         this.stock = stock;
     }
 
-    public Binary getImage() {
-        return image;
-    }
-
-    public void setImage(Binary image) {
-        this.image = image;
-    }
 
     @Override
     public String toString() {
-        return "Article{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+        return "ArticleCreateDto{" +
+                "name='" + name + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
-                ", imageName='" + image + '\'' +
                 '}';
     }
 }
