@@ -14,7 +14,8 @@ public class UserLandingDto {
     private Role[] roles;
 
     public UserLandingDto(){
-        // Empty for framework
+        this.email = "";
+        this.roles = new Role[]{};
     }
 
     public UserLandingDto(@NotNull String email, @NotNull Role[] roles) {

@@ -15,7 +15,8 @@ public class UserLoginDto {
     private String password;
 
     public UserLoginDto() {
-        // Empty for framework
+        this.email = "";
+        this.password="";
     }
 
     public UserLoginDto(@NotNull String email, @NotNull String password) {

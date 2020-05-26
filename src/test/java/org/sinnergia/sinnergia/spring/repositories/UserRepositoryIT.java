@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestConfig
-public class UserRepositoryIT {
+class UserRepositoryIT {
 
     @Autowired
     private UserRepository userRepository;
@@ -25,7 +25,7 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void createUsers(){
+    void createUsers(){
         User user = createUser("tomcat", "tomcat@gmail.com", "tomcat");
         StepVerifier
                 .create(this.userRepository.save(user))
@@ -43,7 +43,7 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void searchByEmail(){
+    void searchByEmail(){
         User user = createUser("tomcat", "tomcat1@gmail.com", "tomcat");
         StepVerifier
                 .create(this.userRepository.save(user))
@@ -70,7 +70,7 @@ public class UserRepositoryIT {
 
 
     @Test
-    public void searchNotExistedEmail(){
+    void searchNotExistedEmail(){
         StepVerifier
                 .create(this.userRepository.findOneByEmail("tomcat4@gmail.com"))
                 .expectNextCount(0)
@@ -79,7 +79,7 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void searchAllByName(){
+    void searchAllByName(){
         User user = createUser("tomcat", "tomcat5@gmail.com", "tomcat");
         StepVerifier
                 .create(this.userRepository.save(user))
@@ -108,7 +108,7 @@ public class UserRepositoryIT {
         this.removeUser(user3);
     }
 
-    public void removeUser(User user){
+    void removeUser(User user){
         StepVerifier
                 .create(this.userRepository.delete(user))
                 .expectComplete()

@@ -148,6 +148,4 @@ class UserResourceIT {
                 .expectStatus().isBadRequest();
     }
 
-
-    //Credential Exception (401). User or Password incorrect.
 }

@@ -20,7 +20,9 @@ public class UserRegisterDto {
     private String repeatedPassword;
 
     public UserRegisterDto(){
-        // Empty for framework
+        this.email = "";
+        this.password = "";
+        this.repeatedPassword = "";
     }
 
     public UserRegisterDto(@NotNull String email, @NotNull String password, @NotNull  String repeatedPassword) {

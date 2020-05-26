@@ -14,7 +14,7 @@ public class ArticleCreateDto {
 
 
     public ArticleCreateDto() {
-        // Empty for framework
+        this.name = "";
     }
 
     public ArticleCreateDto(String name, BigDecimal price, Integer stock) {
