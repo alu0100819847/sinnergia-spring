@@ -5,7 +5,11 @@ import org.sinnergia.sinnergia.spring.config.ApiTestConfig;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.math.BigDecimal;
@@ -19,9 +23,9 @@ public class ArticleResourceIT {
     private WebTestClient webTestClient;
 
 
-/*
+
     @Test
-    void testCreateArticle() throws IOException {
+    void testCreateArticle() {
         MultipartFile image = new MockMultipartFile("image", "some xml".getBytes());
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("name", "TestName");
@@ -38,16 +42,8 @@ public class ArticleResourceIT {
 
     }
 
-    */
-    @Test
-    void testCreateArticle() {
-        webTestClient
-                .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromValue(new ArticleCreateDto("testingCreateArticle", new BigDecimal(14), 17) ))
-                .exchange()
-                .expectStatus().isOk();
 
-    }
+
 
     @Test
     void testCreateArticleWithBadRequestException(){

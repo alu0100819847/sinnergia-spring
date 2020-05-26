@@ -30,7 +30,6 @@ public class ArticleController {
         this.articleRepository = articleRepository;
     }
 
-/*
     public Mono<Void> createArticle(ArticleCreateDto articleCreateDto, Mono<FilePart> part) {
 
         return part.map(file ->{
@@ -48,16 +47,6 @@ public class ArticleController {
                             }).next();
                             return this.articleRepository.saveAll(articleMono);
                         }).then();
-    }
-
-*/
-
-
-    public Mono<Void> createArticle(ArticleCreateDto articleCreateDto) {
-        Article article = new Article();
-        article.setName(articleCreateDto.getName());
-        article.setPrice(articleCreateDto.getPrice());
-        return this.articleRepository.save(article).then();
     }
 
     public Flux<ArticleBasicDto> readAllArticles() {

@@ -30,18 +30,10 @@ public class ArticleResource {
         this.articleController = articleController;
     }
 
-   //ToDo
-/*
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<Void> createArticle(@Valid @RequestParam String name,@RequestParam BigDecimal price,@RequestParam Integer stock, @RequestPart("file") Mono<FilePart> part ) throws IOException {
         return this.articleController.createArticle(new ArticleCreateDto(name, price, stock), part);
-    }
-
-*/
-
-    @PostMapping
-    public Mono<Void> createArticle(@Valid @RequestBody ArticleCreateDto articleCreateDto) {
-        return this.articleController.createArticle(articleCreateDto);
     }
 
     @GetMapping
