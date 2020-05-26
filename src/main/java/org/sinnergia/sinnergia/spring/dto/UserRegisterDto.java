@@ -20,6 +20,10 @@ public class UserRegisterDto {
     @Size(min=6)
     private String repeatedPassword;
 
+    public UserRegisterDto(){
+        // Empty for framework
+    }
+
     public UserRegisterDto(@NotNull String email, @NotNull String password, @NotNull  String repeatedPassword) {
         this.email = email;
         this.password = password;

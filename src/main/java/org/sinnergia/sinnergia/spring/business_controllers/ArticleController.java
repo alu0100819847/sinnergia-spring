@@ -1,23 +1,14 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.sinnergia.sinnergia.spring.documents.Article;
-import org.sinnergia.sinnergia.spring.documents.User;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
-import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
 import org.sinnergia.sinnergia.spring.repositories.ArticleRepository;
-import org.sinnergia.sinnergia.spring.services.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
-import java.util.function.Function;
 
 @Controller
 public class ArticleController {

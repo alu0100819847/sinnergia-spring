@@ -5,14 +5,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.sinnergia.sinnergia.spring.documents.JWTConfig;
-import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.repositories.JWTConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
@@ -43,15 +38,7 @@ public class JwtService {
                 .sign(algorithm);
     }
 
-    public Mono<JWTConfig> getSecret(){
-        Flux<JWTConfig> secret = this.repository.findAll();
-        return secret.switchIfEmpty(this.repository.save(new JWTConfig())).next();
-    }
-
-
-
     public DecodedJWT verify(String token) {
-
         try {
             return JWT.require(Algorithm.HMAC256("secret"))
                     .withIssuer(ISSUER).build().verify(token);

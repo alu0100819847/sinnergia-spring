@@ -19,6 +19,7 @@ public class ArticleCreateDto implements Serializable {
 
 
     public ArticleCreateDto() {
+        // Empty for framework
     }
 
     public ArticleCreateDto(String name, BigDecimal price, Integer stock) {

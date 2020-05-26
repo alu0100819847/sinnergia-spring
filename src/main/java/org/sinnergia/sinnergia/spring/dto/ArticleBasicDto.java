@@ -11,7 +11,9 @@ public class ArticleBasicDto {
     private Integer stock;
 
 
-    public ArticleBasicDto() {}
+    public ArticleBasicDto() {
+        // Empty
+    }
 
     public ArticleBasicDto(String name, BigDecimal price, Integer stock) {
         this.name = name;
