@@ -5,7 +5,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.sinnergia.sinnergia.spring.repositories.JWTConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private JWTConfigRepository repository;
+
 
     private static final int EXPIRES_TIME = 1080000;
     private static final String ISSUER = "auth0";
@@ -22,8 +21,8 @@ public class JwtService {
     private static final String ROLES = "roles";
 
     @Autowired
-    public JwtService(JWTConfigRepository repository) {
-        this.repository = repository;
+    public JwtService() {
+        // Empty
     }
 
     public String createToken(String[] roles, String email) {

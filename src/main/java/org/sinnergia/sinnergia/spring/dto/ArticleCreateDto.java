@@ -1,14 +1,9 @@
 package org.sinnergia.sinnergia.spring.dto;
 
-import org.bson.types.Binary;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ArticleCreateDto implements Serializable {
+public class ArticleCreateDto {
 
     @NotNull
     private String name;

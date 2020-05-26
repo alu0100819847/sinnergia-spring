@@ -10,12 +10,15 @@ public class PasswordValidator implements ConstraintValidator<Password, String[]
 
    @Override
    public void initialize(Password constraintAnnotation) {
-
+      // Empty
    }
 
    @Override
    public boolean isValid(String[] password, ConstraintValidatorContext constraintValidatorContext) {
-      throw new IllegalArgumentException("Illegal method signature, "
-              + "expected parameter of type Reservation.");
+      if(!password[0].equals(password[1])){
+         throw new IllegalArgumentException("Illegal method signature, "
+                 + "expected parameter of type Reservation.");
+      }
+      return true;
    }
 }

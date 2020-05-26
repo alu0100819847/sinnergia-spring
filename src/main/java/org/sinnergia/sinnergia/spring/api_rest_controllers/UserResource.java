@@ -33,12 +33,12 @@ public class UserResource {
     }
 
     @PostMapping
-    public Mono<JwtDto> login(@Valid @RequestBody UserLoginDto userLoginDto){
+    public Mono<JwtDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto){
         return this.userController.login(userLoginDto);
     }
 
     @PostMapping(value = REGISTER)
-    public Mono<Void> register(@Valid @RequestBody UserRegisterDto userRegisterDto){
+    public Mono<Void> registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto){
         return this.userController.register(userRegisterDto);
     }
 

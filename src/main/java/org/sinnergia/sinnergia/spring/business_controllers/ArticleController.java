@@ -9,45 +9,18 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
 @Controller
 public class ArticleController {
 
     private ArticleRepository articleRepository;
-
 
     @Autowired
     public ArticleController(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
     }
 
-/*
-    public Mono<Void> createArticle(ArticleCreateDto articleCreateDto, Mono<FilePart> part) {
-
-        return part.map(file ->{
-
-                    Mono<Article> articleMono =
-                            file.content().map(dataBuffer -> {
-                                Article article = new Article();
-                                article.setName(articleCreateDto.getName());
-                                article.setPrice(articleCreateDto.getPrice());
-                                byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                                dataBuffer.read(bytes);
-                                article.setImage(new Binary(BsonBinarySubType.BINARY, bytes));
-
-                                return article;
-                            }).next();
-                            return this.articleRepository.saveAll(articleMono);
-                        }).then();
-    }
-
-*/
-
-
     public Mono<Void> createArticle(ArticleCreateDto articleCreateDto) {
-        Article article = new Article();
-        article.setName(articleCreateDto.getName());
-        article.setPrice(articleCreateDto.getPrice());
+        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice());
         return this.articleRepository.save(article).then();
     }
 

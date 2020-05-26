@@ -10,35 +10,12 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import java.math.BigDecimal;
 
-import static org.springframework.web.reactive.function.BodyInserters.fromMultipartData;
-
 @ApiTestConfig
-public class ArticleResourceIT {
+class ArticleResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
 
-
-/*
-    @Test
-    void testCreateArticle() throws IOException {
-        MultipartFile image = new MockMultipartFile("image", "some xml".getBytes());
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("name", "TestName");
-        builder.part("price", new BigDecimal(17));
-        builder.part("stock", 14);
-        builder.part("image", image);
-
-        webTestClient
-                .post().uri(ArticleResource.ARTICLE)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(builder.build()))
-                .exchange()
-                .expectStatus().isOk();
-
-    }
-
-    */
     @Test
     void testCreateArticle() {
         webTestClient

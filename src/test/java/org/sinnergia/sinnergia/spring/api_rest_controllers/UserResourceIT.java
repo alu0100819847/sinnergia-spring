@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 
 @ApiTestConfig
-public class UserResourceIT {
+class UserResourceIT {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -76,12 +76,6 @@ public class UserResourceIT {
                 .body(BodyInserters.fromValue(new UserRegisterDto("testRegisterApiIncorrectEmail", "testRegister", "testRegister")))
                 .exchange()
                 .expectStatus().isBadRequest();
-//toDo
-    /*    webTestClient
-                .post().uri(UserResource.USERS + UserResource.REGISTER)
-                .body(BodyInserters.fromValue(new UserRegisterDto("notRepeatedPassword@example.com", "testRegister", "tomcat")))
-                .exchange()
-                .expectStatus().isBadRequest();*/
 
         webTestClient
                 .post().uri(UserResource.USERS + UserResource.REGISTER)

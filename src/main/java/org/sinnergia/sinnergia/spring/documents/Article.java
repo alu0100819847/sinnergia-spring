@@ -19,7 +19,11 @@ public class Article {
 
     private Binary image;
 
-    public Article() {}
+    public Article(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+        this.stock = 0;
+    }
 
     public String getId() {
         return id;
