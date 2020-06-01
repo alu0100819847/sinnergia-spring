@@ -1,6 +1,7 @@
 package org.sinnergia.sinnergia.spring.documents;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -90,5 +91,18 @@ public class User {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", roles=" + Arrays.toString(roles) +
+                ", registrationDate=" + registrationDate +
+                '}';
     }
 }

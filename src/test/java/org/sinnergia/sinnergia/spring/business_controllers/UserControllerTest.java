@@ -13,7 +13,7 @@ import reactor.test.StepVerifier;
 import static org.junit.Assert.assertEquals;
 
 @TestConfig
-class UserControllerIT {
+class UserControllerTest {
 
     @Autowired
     private UserController userController;

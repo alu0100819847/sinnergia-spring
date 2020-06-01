@@ -1,6 +1,7 @@
 package org.sinnergia.sinnergia.spring.repositories;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sinnergia.sinnergia.spring.config.TestConfig;
 import org.sinnergia.sinnergia.spring.documents.User;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @TestConfig
-class UserRepositoryIT {
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -22,6 +23,14 @@ class UserRepositoryIT {
         user.setEmail(email);
         user.setPassword(password);
         return user;
+    }
+
+    @BeforeEach
+    void removeAll(){
+        StepVerifier
+                .create(this.userRepository.deleteAll())
+                .expectComplete()
+                .verify();
     }
 
     @Test
@@ -114,4 +123,6 @@ class UserRepositoryIT {
                 .expectComplete()
                 .verify();
     }
+
+
 }

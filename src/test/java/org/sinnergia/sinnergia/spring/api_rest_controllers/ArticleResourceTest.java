@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import java.math.BigDecimal;
 
 @ApiTestConfig
-class ArticleResourceIT {
+class ArticleResourceTest {
 
     @Autowired
     private WebTestClient webTestClient;

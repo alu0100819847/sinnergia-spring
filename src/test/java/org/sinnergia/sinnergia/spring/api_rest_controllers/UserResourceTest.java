@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 
 @ApiTestConfig
-class UserResourceIT {
+class UserResourceTest {
 
     @Autowired
     private WebTestClient webTestClient;
