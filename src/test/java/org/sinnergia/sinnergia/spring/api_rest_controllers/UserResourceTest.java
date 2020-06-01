@@ -3,6 +3,7 @@ package org.sinnergia.sinnergia.spring.api_rest_controllers;
 import org.junit.jupiter.api.Test;
 import org.sinnergia.sinnergia.spring.config.ApiTestConfig;
 import org.sinnergia.sinnergia.spring.documents.Role;
+import org.sinnergia.sinnergia.spring.dto.UserAdminDto;
 import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
 import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
 import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
@@ -26,11 +27,14 @@ class UserResourceTest {
     @Test
     void testRegisterLandingUser(){
         Role[] roles = {Role.CUSTOMER};
+        UserLandingDto userLandingDto = new UserLandingDto("apiLandingUser@example.com", roles);
         webTestClient
                 .post().uri(UserResource.USERS + UserResource.LANDING)
-                .body(BodyInserters.fromValue(new UserLandingDto("apiLandingUser@example.com", roles)))
+                .body(BodyInserters.fromValue(userLandingDto))
                 .exchange()
                 .expectStatus().isOk();
+
+        this.deleteAll(userLandingDto.getEmail());
     }
 
     @Test
@@ -148,4 +152,28 @@ class UserResourceTest {
                 .expectStatus().isBadRequest();
     }
 
+
+    @Test
+    void testReadAll(){
+        webTestClient
+                .post().uri(UserResource.USERS + UserResource.REGISTER)
+                .body(BodyInserters.fromValue(new UserRegisterDto("testReadAllApi@example.com", "testReadAllApi", "testReadAllApi")))
+                .exchange()
+                .expectStatus().isOk();
+
+        webTestClient
+                .get().uri(UserResource.USERS)
+                .exchange()
+                .expectStatus().isOk();
+    }
+
+
+    void deleteAll(String... emails){
+        for(String email : emails){
+            webTestClient
+                    .delete().uri(UserResource.USERS + "/" + email)
+                    .exchange()
+                    .expectStatus().isOk();
+        }
+    }
 }

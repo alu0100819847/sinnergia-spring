@@ -9,6 +9,7 @@ public interface UserRepository extends ReactiveSortingRepository<User, String> 
 
     Flux<User> findAllByName(String name);
     Mono<User> findOneByEmail(String email);
+    Mono<Void> deleteOneByEmail(String email);
 
 
 }

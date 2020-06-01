@@ -1,5 +1,6 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sinnergia.sinnergia.spring.config.TestConfig;
 import org.sinnergia.sinnergia.spring.documents.Role;
@@ -20,6 +21,15 @@ class UserControllerTest {
 
     @Autowired
     private JwtService jwtService;
+
+    @BeforeEach
+    void deleteAll(){
+        StepVerifier
+                .create(this.userController.deleteAll())
+                .expectComplete()
+                .verify();
+    }
+
     @Test
     void testRegisterFromLanding(){
         Role[] roles = {Role.CUSTOMER};
@@ -71,19 +81,6 @@ class UserControllerTest {
                 .verify();
     }
 
-    @Test
-    void testLoginUser(){
-        StepVerifier
-                .create(this.userController.register(new UserRegisterDto("loginTest@example.com", "logintest", "logintest")))
-                .expectComplete()
-                .verify();
-
-        StepVerifier
-                .create(this.userController.checkCredential(new UserLoginDto("loginTest@example.com", "logintest")))
-                .expectComplete()
-                .verify();
-
-    }
 
     @Test
     void testLoginUserWithCredentialException(){
@@ -128,6 +125,43 @@ class UserControllerTest {
                 .verify();
     }
 
+    @Test
+    void testLoginUser(){
+        StepVerifier
+                .create(this.userController.register(new UserRegisterDto("loginTest@example.com", "logintest", "logintest")))
+                .expectComplete()
+                .verify();
 
+        StepVerifier
+                .create(this.userController.checkCredential(new UserLoginDto("loginTest@example.com", "logintest")))
+                .expectComplete()
+                .verify();
+
+    }
+
+    @Test
+    void testReadAll(){
+        StepVerifier
+                .create(this.userController.register(new UserRegisterDto("readAllTest@example.com", "readAllTest", "readAllTest")))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.userController.readAll())
+                .expectNextCount(1)
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.userController.register(new UserRegisterDto("readAllTest1@example.com", "readAllTest", "readAllTest")))
+                .expectComplete()
+                .verify();
+
+        StepVerifier
+                .create(this.userController.readAll())
+                .expectNextCount(2)
+                .expectComplete()
+                .verify();
+    }
 
 }

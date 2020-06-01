@@ -3,10 +3,7 @@ package org.sinnergia.sinnergia.spring.business_controllers;
 
 import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.documents.User;
-import org.sinnergia.sinnergia.spring.dto.JwtDto;
-import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
-import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
-import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
+import org.sinnergia.sinnergia.spring.dto.*;
 import org.sinnergia.sinnergia.spring.exceptions.ConflictException;
 import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
 import org.sinnergia.sinnergia.spring.repositories.UserRepository;
@@ -14,6 +11,7 @@ import org.sinnergia.sinnergia.spring.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
@@ -85,5 +83,18 @@ public class UserController {
                 .switchIfEmpty(Mono.error(new CredentialException("User or Password incorrect.")))
                 .map(user -> new UserLoginDto(user.getEmail(), user.getPassword()));
 
+    }
+
+    public Flux<UserAdminDto> readAll() {
+        return this.userRepository.findAll()
+                .map(user -> new UserAdminDto(user.getId(), user.getEmail(), user.getName(), user.getSurname(), user.getRoles(), user.getRegistrationDate()));
+    }
+
+    public Mono<Void> deleteAll(){
+        return this.userRepository.deleteAll();
+    }
+
+    public Mono<Void> delete(String email) {
+        return this.userRepository.deleteOneByEmail(email);
     }
 }

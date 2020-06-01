@@ -2,12 +2,10 @@ package org.sinnergia.sinnergia.spring.api_rest_controllers;
 
 
 import org.sinnergia.sinnergia.spring.business_controllers.UserController;
-import org.sinnergia.sinnergia.spring.dto.JwtDto;
-import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
-import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
-import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
+import org.sinnergia.sinnergia.spring.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -17,8 +15,8 @@ import javax.validation.Valid;
 public class UserResource {
     public static final String USERS = "/users";
     public static final String LANDING = "/landing";
-    public static final String REGISTER = "/register" ;
-
+    public static final String REGISTER = "/register";
+    public static final String EMAIL ="/{email}";
     private UserController userController;
 
     @Autowired
@@ -42,5 +40,14 @@ public class UserResource {
         return this.userController.register(userRegisterDto);
     }
 
+    @GetMapping
+    public Flux<UserAdminDto> getUsers(){
+        return this.userController.readAll();
+    }
+
+    @DeleteMapping(value= EMAIL)
+    public Mono<Void> deleteUser(@PathVariable String email){
+        return this.userController.delete(email);
+    }
 
 }
