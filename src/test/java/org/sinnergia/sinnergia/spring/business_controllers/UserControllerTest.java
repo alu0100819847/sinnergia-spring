@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sinnergia.sinnergia.spring.config.TestConfig;
 import org.sinnergia.sinnergia.spring.documents.Role;
+import org.sinnergia.sinnergia.spring.dto.UserAdminDto;
 import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
 import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
 import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
@@ -11,7 +12,7 @@ import org.sinnergia.sinnergia.spring.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @TestConfig
 class UserControllerTest {
@@ -162,6 +163,28 @@ class UserControllerTest {
                 .expectNextCount(2)
                 .expectComplete()
                 .verify();
+    }
+
+    @Test
+    void testUpdateUser(){
+        StepVerifier
+                .create(this.userController.register(new UserRegisterDto("updateUserTest@example.com", "updateUserTest", "updateUserTest")))
+                .expectComplete()
+                .verify();
+        UserAdminDto userAdminDto = this.userController.readAll().blockFirst();
+        assertNotNull(userAdminDto);
+        userAdminDto.setName("testingUpdate");
+        userAdminDto.setSurname("in userController");
+        userAdminDto.setRoles(new Role[]{Role.CUSTOMER, Role.ADMIN});
+        StepVerifier
+                .create(this.userController.update(userAdminDto))
+                .expectComplete()
+                .verify();
+        UserAdminDto userAdminDto2 = this.userController.readAll().blockFirst();
+        assertNotNull(userAdminDto2);
+        assertEquals("testingUpdate", userAdminDto2.getName());
+        assertEquals("in userController", userAdminDto2.getSurname());
+        assertArrayEquals(new Role[]{Role.CUSTOMER, Role.ADMIN}, userAdminDto2.getRoles());
     }
 
 }

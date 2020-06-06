@@ -50,4 +50,9 @@ public class UserResource {
         return this.userController.delete(email);
     }
 
+    @PutMapping
+    public Mono<Void> updateUser(@Valid @RequestBody UserAdminDto userAdminDto){
+        return this.userController.update(userAdminDto);
+    }
+
 }

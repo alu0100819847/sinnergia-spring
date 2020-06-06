@@ -8,12 +8,19 @@ import org.sinnergia.sinnergia.spring.dto.UserLandingDto;
 import org.sinnergia.sinnergia.spring.dto.UserLoginDto;
 import org.sinnergia.sinnergia.spring.dto.UserRegisterDto;
 import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
+import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
 
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 @ApiTestConfig
@@ -40,9 +47,10 @@ class UserResourceTest {
     @Test
     void testRegisterLandingUserWithConflictException(){
         Role[] roles = {Role.CUSTOMER};
+        UserLandingDto userLandingDto = new UserLandingDto("apiLandingUserRepeated@example.com", roles);
         webTestClient
                 .post().uri(UserResource.USERS + UserResource.LANDING)
-                .body(BodyInserters.fromValue(new UserLandingDto("apiLandingUserRepeated@example.com", roles)))
+                .body(BodyInserters.fromValue(userLandingDto))
                 .exchange()
                 .expectStatus().isOk();
 
@@ -51,6 +59,8 @@ class UserResourceTest {
                 .body(BodyInserters.fromValue(new UserLandingDto("apiLandingUserRepeated@example.com", roles)))
                 .exchange()
                 .expectStatus().is5xxServerError();
+
+        this.deleteAll(userLandingDto.getEmail());
     }
 
     @Test
@@ -65,11 +75,13 @@ class UserResourceTest {
 
     @Test
     void testRegister(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("testRegisterApi@example.com", "testRegisterholaaa", "testRegisterholaaa");
         webTestClient
                 .post().uri(UserResource.USERS + UserResource.REGISTER)
-                .body(BodyInserters.fromValue(new UserRegisterDto("testRegisterApi@example.com", "testRegisterholaaa", "testRegisterholaaa")))
+                .body(BodyInserters.fromValue(userRegisterDto))
                 .exchange()
                 .expectStatus().isOk();
+        this.deleteAll(userRegisterDto.getEmail());
     }
 
 
@@ -109,6 +121,7 @@ class UserResourceTest {
                 .body(BodyInserters.fromValue(new UserLoginDto("testLoginApi@example.com", "testLogin")))
                 .exchange()
                 .expectStatus().isOk();
+        this.deleteAll(userRegisterDto.getEmail());
     }
 
     @Test
@@ -155,9 +168,10 @@ class UserResourceTest {
 
     @Test
     void testReadAll(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("testReadAllApi@example.com", "testReadAllApi", "testReadAllApi");
         webTestClient
                 .post().uri(UserResource.USERS + UserResource.REGISTER)
-                .body(BodyInserters.fromValue(new UserRegisterDto("testReadAllApi@example.com", "testReadAllApi", "testReadAllApi")))
+                .body(BodyInserters.fromValue(userRegisterDto))
                 .exchange()
                 .expectStatus().isOk();
 
@@ -165,8 +179,68 @@ class UserResourceTest {
                 .get().uri(UserResource.USERS)
                 .exchange()
                 .expectStatus().isOk();
+
+        this.deleteAll(userRegisterDto.getEmail());
     }
 
+    @Test
+    void testUpdateUser(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("testUpdateUserApi@example.com", "testUpdateUserApi", "testUpdateUserApi");
+        webTestClient
+                .post().uri(UserResource.USERS + UserResource.REGISTER)
+                .body(BodyInserters.fromValue(userRegisterDto))
+                .exchange()
+                .expectStatus().isOk();
+
+        UserAdminDto userAdminDto =
+                webTestClient
+                    .get().uri(UserResource.USERS)
+                    .exchange()
+                    .expectStatus().isOk()
+                            .expectBodyList(UserAdminDto.class)
+                            .returnResult()
+                    .getResponseBody().get(0);
+
+        assertNotNull(userAdminDto);
+        userAdminDto.setName("updateUser");
+        userAdminDto.setSurname("in Api");
+
+        webTestClient
+                .put().uri(UserResource.USERS)
+                .body(BodyInserters.fromValue(userAdminDto))
+                .exchange()
+                .expectStatus().isOk();
+        this.deleteAll(userAdminDto.getEmail());
+    }
+
+
+    @Test
+    void testUpdateUserWithNotFoundException(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("testUpdateUserWithNotFoundExceptionApi@example.com", "testUpdateUserApi", "testUpdateUserApi");
+        webTestClient
+                .post().uri(UserResource.USERS + UserResource.REGISTER)
+                .body(BodyInserters.fromValue(userRegisterDto))
+                .exchange()
+                .expectStatus().isOk();
+
+        UserAdminDto userAdminDto =
+                webTestClient
+                        .get().uri(UserResource.USERS)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBodyList(UserAdminDto.class)
+                        .returnResult()
+                        .getResponseBody().get(0);
+
+        assertNotNull(userAdminDto);
+        userAdminDto.setId("000000000000000");
+        webTestClient
+                .put().uri(UserResource.USERS)
+                .body(BodyInserters.fromValue(userAdminDto))
+                .exchange()
+                .expectStatus().is5xxServerError();
+        this.deleteAll(userAdminDto.getEmail());
+    }
 
     void deleteAll(String... emails){
         for(String email : emails){

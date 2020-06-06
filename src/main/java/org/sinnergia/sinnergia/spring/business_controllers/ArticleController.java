@@ -25,6 +25,6 @@ public class ArticleController {
     }
 
     public Flux<ArticleBasicDto> readAllArticles() {
-        return this.articleRepository.findAll().map(article -> new ArticleBasicDto(article.getName(), article.getPrice(), article.getStock()));
+        return this.articleRepository.findAll().map(article -> new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock()));
     }
 }

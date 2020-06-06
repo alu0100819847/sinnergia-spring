@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class ArticleBasicDto {
 
+    private String id;
+
     private String name;
 
     private BigDecimal price;
@@ -15,7 +17,7 @@ public class ArticleBasicDto {
         // Empty
     }
 
-    public ArticleBasicDto(String name, BigDecimal price, Integer stock) {
+    public ArticleBasicDto(String id, String name, BigDecimal price, Integer stock) {
         this.name = name;
         this.price = price;
         this.stock = stock;
@@ -45,11 +47,19 @@ public class ArticleBasicDto {
         this.stock = stock;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
         return "ArticleBasicDto{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
                 '}';

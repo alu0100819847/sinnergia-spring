@@ -1,14 +1,17 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
 
+import org.sinnergia.sinnergia.spring.documents.Article;
 import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.documents.User;
 import org.sinnergia.sinnergia.spring.dto.*;
 import org.sinnergia.sinnergia.spring.exceptions.ConflictException;
 import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
+import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
 import org.sinnergia.sinnergia.spring.repositories.UserRepository;
 import org.sinnergia.sinnergia.spring.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
@@ -96,5 +99,18 @@ public class UserController {
 
     public Mono<Void> delete(String email) {
         return this.userRepository.deleteOneByEmail(email);
+    }
+
+    public Mono<Void> update(UserAdminDto userAdminDto) {
+        Mono<User> updateUser = this.userRepository.findById(userAdminDto.getId())
+                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + userAdminDto.getId())))
+                .map(user -> {
+                    user.setEmail(userAdminDto.getEmail());
+                    user.setName(userAdminDto.getName());
+                    user.setSurname(userAdminDto.getSurname());
+                    user.setRoles(userAdminDto.getRoles());
+                    return user;
+                });
+        return this.userRepository.saveAll(updateUser).then();
     }
 }
