@@ -1,8 +1,10 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
 import org.sinnergia.sinnergia.spring.documents.Article;
+import org.sinnergia.sinnergia.spring.documents.User;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
+import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
 import org.sinnergia.sinnergia.spring.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,23 @@ public class ArticleController {
     }
 
     public Flux<ArticleBasicDto> readAllArticles() {
-        return this.articleRepository.findAll().map(article -> new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock()));
+        return this.articleRepository.findAll().map(article -> new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription()));
+    }
+
+    public Mono<Void> update(ArticleBasicDto articleBasicDto) {
+        Mono<Article> updateArticle = this.articleRepository.findById(articleBasicDto.getId())
+                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleBasicDto.getId())))
+                .map(article -> {
+                    article.setName(articleBasicDto.getName());
+                    article.setPrice(articleBasicDto.getPrice());
+                    article.setStock(articleBasicDto.getStock());
+                    article.setDescription(articleBasicDto.getDescription());
+                    return article;
+                });
+        return this.articleRepository.saveAll(updateArticle).then();
+    }
+
+    public Mono<Void> delete(String id) {
+        return this.articleRepository.deleteById(id);
     }
 }

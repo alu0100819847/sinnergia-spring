@@ -12,15 +12,18 @@ public class ArticleBasicDto {
 
     private Integer stock;
 
+    private String description;
 
     public ArticleBasicDto() {
         // Empty
     }
 
-    public ArticleBasicDto(String id, String name, BigDecimal price, Integer stock) {
+    public ArticleBasicDto(String id, String name, BigDecimal price, Integer stock, String description) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
+        this.description = description;
     }
 
     public String getName() {
@@ -55,6 +58,14 @@ public class ArticleBasicDto {
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "ArticleBasicDto{" +
@@ -62,6 +73,7 @@ public class ArticleBasicDto {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

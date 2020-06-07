@@ -36,44 +36,44 @@ public class UserAdminDto {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getSurname() {
         return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     public Role[] getRoles() {
         return roles;
     }
 
-    public void setRoles(Role[] roles) {
-        this.roles = roles;
-    }
-
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setRoles(Role[] roles) {
+        this.roles = roles;
     }
 
     public void setRegistrationDate(LocalDateTime registrationDate) {

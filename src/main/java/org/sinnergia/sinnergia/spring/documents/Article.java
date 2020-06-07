@@ -17,6 +17,8 @@ public class Article {
 
     private Integer stock;
 
+    private String description;
+
     private Binary image;
 
     public Article(String name, BigDecimal price) {
@@ -65,6 +67,14 @@ public class Article {
         this.image = image;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -72,7 +82,8 @@ public class Article {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
-                ", imageName='" + image + '\'' +
+                ", description='" + description + '\'' +
+                ", image=" + image +
                 '}';
     }
 }
