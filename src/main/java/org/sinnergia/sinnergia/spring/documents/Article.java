@@ -19,12 +19,13 @@ public class Article {
 
     private String description;
 
-    private Binary image;
+    private String imageName;
 
-    public Article(String name, BigDecimal price) {
+    public Article(String name, BigDecimal price, String description) {
         this.name = name;
         this.price = price;
         this.stock = 0;
+        this.description = description;
     }
 
     public String getId() {
@@ -59,12 +60,12 @@ public class Article {
         this.stock = stock;
     }
 
-    public Binary getImage() {
-        return image;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setImage(Binary image) {
-        this.image = image;
+    public void setImage(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getDescription() {
@@ -83,7 +84,7 @@ public class Article {
                 ", price=" + price +
                 ", stock=" + stock +
                 ", description='" + description + '\'' +
-                ", image=" + image +
+                ", imageName='" + imageName + '\'' +
                 '}';
     }
 }

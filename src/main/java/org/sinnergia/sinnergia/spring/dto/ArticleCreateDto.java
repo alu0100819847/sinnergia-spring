@@ -12,15 +12,17 @@ public class ArticleCreateDto {
 
     private Integer stock;
 
+    private String description;
 
     public ArticleCreateDto() {
         this.name = "";
     }
 
-    public ArticleCreateDto(String name, BigDecimal price, Integer stock) {
+    public ArticleCreateDto(String name, BigDecimal price, Integer stock, String description) {
         this.name = name;
         this.price = price;
         this.stock = stock;
+        this.description = description;
     }
 
     public BigDecimal getPrice() {
@@ -47,6 +49,13 @@ public class ArticleCreateDto {
         this.stock = stock;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {
@@ -54,6 +63,7 @@ public class ArticleCreateDto {
                 "name='" + name + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

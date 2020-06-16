@@ -1,15 +1,22 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
 import org.sinnergia.sinnergia.spring.documents.Article;
-import org.sinnergia.sinnergia.spring.documents.User;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
+import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
 import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
+import org.sinnergia.sinnergia.spring.exceptions.UnsupportedExtension;
 import org.sinnergia.sinnergia.spring.repositories.ArticleRepository;
+import org.sinnergia.sinnergia.spring.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 @Controller
 public class ArticleController {
@@ -22,7 +29,8 @@ public class ArticleController {
     }
 
     public Mono<Void> createArticle(ArticleCreateDto articleCreateDto) {
-        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice());
+        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice(), articleCreateDto.getDescription());
+        article.setStock(articleCreateDto.getStock());
         return this.articleRepository.save(article).then();
     }
 
@@ -43,7 +51,28 @@ public class ArticleController {
         return this.articleRepository.saveAll(updateArticle).then();
     }
 
+
+
     public Mono<Void> delete(String id) {
         return this.articleRepository.deleteById(id);
     }
+
+    public Mono<Void> createArticleImage(ArticleCreateDto articleCreateDto, MultipartFile file) {
+        ImageService imageService = new ImageService();
+        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice(), articleCreateDto.getDescription());
+        article.setStock(articleCreateDto.getStock());
+        Mono<Article> monoArticle = this.articleRepository.save(article).map(articleSaved -> {
+            String src = imageService.getPath(articleSaved.getId(), file.getOriginalFilename());
+            articleSaved.setImage(src);
+            try{
+                imageService.saveImage(file);
+            } catch (IOException error){
+                throw new UnsupportedExtension("No se ha podido procesar la imagen.");
+            }
+            return article;
+        });
+
+        return this.articleRepository.saveAll(monoArticle).then();
+    }
+
 }

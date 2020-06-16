@@ -3,13 +3,15 @@ package org.sinnergia.sinnergia.spring.api_rest_controllers;
 import org.sinnergia.sinnergia.spring.business_controllers.ArticleController;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
-import org.sinnergia.sinnergia.spring.dto.UserAdminDto;
+import org.sinnergia.sinnergia.spring.dto.ArticleCreateImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @RestController
@@ -24,11 +26,6 @@ public class ArticleResource {
         this.articleController = articleController;
     }
 
-    @PostMapping
-    public Mono<Void> createArticle(@Valid @RequestBody ArticleCreateDto articleCreateDto) {
-        return this.articleController.createArticle(articleCreateDto);
-    }
-
     @GetMapping
     public Flux<ArticleBasicDto> getArticles() {
         return this.articleController.readAllArticles();
@@ -39,8 +36,18 @@ public class ArticleResource {
         return this.articleController.update(articleBasicDto);
     }
 
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<Void> createArticle(@Valid @ModelAttribute ArticleCreateImageDto articleCreateImageDto) {
+        if(articleCreateImageDto.getFile() != null){
+            return this.articleController.createArticleImage(new ArticleCreateDto(articleCreateImageDto.getName(), articleCreateImageDto.getPrice(), articleCreateImageDto.getStock(), articleCreateImageDto.getDescription()), articleCreateImageDto.getFile());
+        }
+        return this.articleController.createArticle(new ArticleCreateDto(articleCreateImageDto.getName(), articleCreateImageDto.getPrice(), articleCreateImageDto.getStock(), articleCreateImageDto.getDescription()));
+    }
+
     @DeleteMapping(value= ID)
     public Mono<Void> deleteUser(@PathVariable String id){
         return this.articleController.delete(id);
     }
+
+
 }
