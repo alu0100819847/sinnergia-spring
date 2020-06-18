@@ -4,6 +4,7 @@ import org.sinnergia.sinnergia.spring.business_controllers.ArticleController;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateImageDto;
+import org.sinnergia.sinnergia.spring.dto.ArticleUpdateImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 
 @RestController
@@ -31,9 +31,13 @@ public class ArticleResource {
         return this.articleController.readAllArticles();
     }
 
-    @PutMapping
-    public Mono<Void> updateUser(@Valid @RequestBody ArticleBasicDto articleBasicDto){
-        return this.articleController.update(articleBasicDto);
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Mono<Void> updateArticleImage(@Valid @ModelAttribute ArticleUpdateImageDto articleUpdateImageDto){
+        if(articleUpdateImageDto.getFile() != null){
+            return this.articleController.updateWithImage(new ArticleBasicDto(articleUpdateImageDto.getId(), articleUpdateImageDto.getName(), articleUpdateImageDto.getPrice(), articleUpdateImageDto.getStock(), articleUpdateImageDto.getDescription()), articleUpdateImageDto.getFile());
+        }
+        return this.articleController.update(new ArticleBasicDto(articleUpdateImageDto.getId(), articleUpdateImageDto.getName(), articleUpdateImageDto.getPrice(), articleUpdateImageDto.getStock(), articleUpdateImageDto.getDescription()));
+
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -42,6 +46,7 @@ public class ArticleResource {
             return this.articleController.createArticleImage(new ArticleCreateDto(articleCreateImageDto.getName(), articleCreateImageDto.getPrice(), articleCreateImageDto.getStock(), articleCreateImageDto.getDescription()), articleCreateImageDto.getFile());
         }
         return this.articleController.createArticle(new ArticleCreateDto(articleCreateImageDto.getName(), articleCreateImageDto.getPrice(), articleCreateImageDto.getStock(), articleCreateImageDto.getDescription()));
+
     }
 
     @DeleteMapping(value= ID)

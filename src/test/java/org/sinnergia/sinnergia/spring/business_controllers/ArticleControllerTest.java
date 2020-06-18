@@ -2,6 +2,7 @@ package org.sinnergia.sinnergia.spring.business_controllers;
 
 import org.junit.jupiter.api.Test;
 import org.sinnergia.sinnergia.spring.config.TestConfig;
+import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -10,7 +11,7 @@ import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @TestConfig
 public class ArticleControllerTest {
@@ -39,4 +40,24 @@ public class ArticleControllerTest {
                 })
                 .verify();
     }
+
+    @Test
+    void updateArticle(){
+        MultipartFile image = new MockMultipartFile("image","estoEsUnTest.png", null, "some xml".getBytes());
+        StepVerifier
+                .create(this.articleController.createArticleImage(new ArticleCreateDto("articulo", new BigDecimal(0), 0, "desc"), image))
+                .expectComplete()
+                .verify();
+
+        ArticleBasicDto articleBasicDto = this.articleController.readAllArticles().blockFirst();
+        articleBasicDto.setName("prueba de update");
+        StepVerifier
+                .create(this.articleController.update(articleBasicDto))
+                .expectComplete()
+                .verify();
+        ArticleBasicDto articleBasicDto2 = this.articleController.readAllArticles().blockFirst();
+        assertNotNull(articleBasicDto2);
+        assertEquals("prueba de update", articleBasicDto2.getName());
+    }
+
 }

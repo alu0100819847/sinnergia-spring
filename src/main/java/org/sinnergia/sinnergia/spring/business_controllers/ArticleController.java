@@ -84,7 +84,26 @@ public class ArticleController {
         return this.articleRepository.saveAll(updateArticle).then();
     }
 
-
+    public Mono<Void> updateWithImage(ArticleBasicDto articleBasicDto, MultipartFile file) {
+        Mono<Article> updateArticle = this.articleRepository.findById(articleBasicDto.getId())
+                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleBasicDto.getId())))
+                .map(article -> {
+                    article.setName(articleBasicDto.getName());
+                    article.setPrice(articleBasicDto.getPrice());
+                    article.setStock(articleBasicDto.getStock());
+                    article.setDescription(articleBasicDto.getDescription());
+                    ImageService imageService = new ImageService();
+                    String src = imageService.getPath(article.getId(), file.getOriginalFilename());
+                    article.setImage(src);
+                    try{
+                        imageService.saveImage(file);
+                    } catch (IOException error){
+                        throw new UnsupportedExtension("No se ha podido procesar la imagen.");
+                    }
+                    return article;
+                });
+        return this.articleRepository.saveAll(updateArticle).then();
+    }
 
     public Mono<Void> delete(String id) {
         return this.articleRepository.deleteById(id);
@@ -109,3 +128,6 @@ public class ArticleController {
     }
 
 }
+
+
+

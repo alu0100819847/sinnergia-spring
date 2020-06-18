@@ -28,7 +28,7 @@ class ArticleResourceTest {
 
         webTestClient
                 .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromMultipartData(this.buildFormData("TestName", 17, 14, null)))
+                .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("TestName", 17, 14, null)))
                 .exchange()
                 .expectStatus().isOk();
         this.deleteAll();
@@ -38,7 +38,7 @@ class ArticleResourceTest {
     void testCreateArticleWithBadRequestException(){
         webTestClient
                 .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromMultipartData(this.buildFormData(null, 14, 17, null)))
+                .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate(null, 14, 17, null)))
                 .exchange()
                 .expectStatus().isBadRequest();
     }
@@ -47,12 +47,12 @@ class ArticleResourceTest {
     void testReadAllArticles() {
         webTestClient
                 .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromMultipartData(this.buildFormData("testingCreateArticle", 14, 17, null) ))
+                .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingCreateArticle", 14, 17, null) ))
                 .exchange()
                 .expectStatus().isOk();
         webTestClient
                 .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromMultipartData(this.buildFormData("testingCreateArticle", 14, 17, null) ))
+                .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingCreateArticle", 14, 17, null) ))
                 .exchange()
                 .expectStatus().isOk();
 
@@ -69,7 +69,7 @@ class ArticleResourceTest {
     void testUpdateArticle(){
         webTestClient
                 .post().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromMultipartData(this.buildFormData("testingUpdatingArticle", 14, 17, null) ))
+                .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingUpdatingArticle", 14, 17, null) ))
                 .exchange()
                 .expectStatus().isOk();
 
@@ -86,7 +86,7 @@ class ArticleResourceTest {
         articleBasicDto.setDescription("Esto es un test.");
         webTestClient
                 .put().uri(ArticleResource.ARTICLE)
-                .body(BodyInserters.fromValue(articleBasicDto))
+                .body(BodyInserters.fromMultipartData(buildFormDataforUpdate(articleBasicDto, null)))
                 .exchange()
                 .expectStatus().isOk();
 
@@ -122,7 +122,7 @@ class ArticleResourceTest {
         }
     }
 
-    private MultiValueMap<String, HttpEntity<?>> buildFormData(String name, double price, int stock, MultipartFile file){
+    private MultiValueMap<String, HttpEntity<?>> buildFormDataforCreate(String name, double price, int stock, MultipartFile file){
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         if(name != null){
             builder.part("name", name);
@@ -134,4 +134,21 @@ class ArticleResourceTest {
         }
         return builder.build();
     }
+
+    private MultiValueMap<String, HttpEntity<?>> buildFormDataforUpdate(ArticleBasicDto articleBasicDto, MultipartFile file){
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        if(articleBasicDto.getName() != null){
+            builder.part("name", articleBasicDto.getName());
+        }
+        builder.part("id", articleBasicDto.getId());
+        builder.part("price", articleBasicDto.getPrice());
+        builder.part("stock", articleBasicDto.getStock());
+        builder.part("description", articleBasicDto.getDescription());
+        if(file != null){
+            builder.part("file", file);
+        }
+        return builder.build();
+    }
+
+
 }
