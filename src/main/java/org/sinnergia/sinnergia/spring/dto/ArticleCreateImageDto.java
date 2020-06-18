@@ -19,6 +19,7 @@ public class ArticleCreateImageDto {
     private MultipartFile file;
 
     public ArticleCreateImageDto() {
+        this.name = "";
     }
 
     public ArticleCreateImageDto(@NotNull String name, BigDecimal price, Integer stock, MultipartFile file, String description) {

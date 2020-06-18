@@ -60,4 +60,24 @@ public class ArticleControllerTest {
         assertEquals("prueba de update", articleBasicDto2.getName());
     }
 
+    @Test
+    void updateArticleWithImage(){
+        MultipartFile image = new MockMultipartFile("image","estoEsUnTest.png", null, "some xml".getBytes());
+        StepVerifier
+                .create(this.articleController.createArticleImage(new ArticleCreateDto("articulo", new BigDecimal(0), 0, "desc"), image))
+                .expectComplete()
+                .verify();
+
+        ArticleBasicDto articleBasicDto = this.articleController.readAllArticles().blockFirst();
+        articleBasicDto.setName("prueba de update");
+        MultipartFile image2 = new MockMultipartFile("otherImage","estoEsUnTest.png", null, "some xml".getBytes());
+        StepVerifier
+                .create(this.articleController.updateWithImage(articleBasicDto, image2))
+                .expectComplete()
+                .verify();
+        ArticleBasicDto articleBasicDto2 = this.articleController.readAllArticles().blockFirst();
+        assertNotNull(articleBasicDto2);
+        assertEquals("prueba de update", articleBasicDto2.getName());
+    }
+
 }
