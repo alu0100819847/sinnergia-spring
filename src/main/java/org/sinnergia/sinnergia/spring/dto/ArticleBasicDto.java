@@ -1,10 +1,6 @@
 package org.sinnergia.sinnergia.spring.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-
-import java.io.File;
 import java.math.BigDecimal;
 
 @JsonSerialize

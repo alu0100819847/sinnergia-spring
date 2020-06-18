@@ -15,10 +15,10 @@ public class ArticleCreateDto {
     private String description;
 
     public ArticleCreateDto() {
-        this.name = "";
+        // Empty
     }
 
-    public ArticleCreateDto(String name, BigDecimal price, Integer stock, String description) {
+    public ArticleCreateDto(@NotNull String name, BigDecimal price, Integer stock, String description) {
         this.name = name;
         this.price = price;
         this.stock = stock;

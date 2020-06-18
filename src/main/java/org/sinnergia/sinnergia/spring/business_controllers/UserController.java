@@ -1,7 +1,5 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
-
-import org.sinnergia.sinnergia.spring.documents.Article;
 import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.documents.User;
 import org.sinnergia.sinnergia.spring.dto.*;
@@ -11,7 +9,6 @@ import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
 import org.sinnergia.sinnergia.spring.repositories.UserRepository;
 import org.sinnergia.sinnergia.spring.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;

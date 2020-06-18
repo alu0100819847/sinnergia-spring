@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 @TestConfig
-public class ArticleControllerTest {
+class ArticleControllerTest {
 
     @Autowired
     private ArticleController articleController;

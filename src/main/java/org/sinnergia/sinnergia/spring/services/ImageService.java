@@ -1,7 +1,5 @@
 package org.sinnergia.sinnergia.spring.services;
 
-import org.sinnergia.sinnergia.spring.exceptions.ConflictException;
-import org.sinnergia.sinnergia.spring.exceptions.CredentialException;
 import org.sinnergia.sinnergia.spring.exceptions.UnsupportedExtension;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +15,12 @@ public class ImageService {
 
     Path path;
 
-    public static String basicPath = "src/main/resources/files";
+    public static final String basicPath = "src/main/resources/files";
 
-    public static String defaultImageUri = "src/main/resources/files/emptyImage.jpg";
+    public static final String defaultImageUri = "src/main/resources/files/emptyImage.jpg";
 
     public ImageService() {
-        extensions = new ArrayList<String>();
+        extensions = new ArrayList<>();
         extensions.add("png");
         extensions.add("jpg");
         extensions.add("jpeg");
