@@ -1,7 +1,13 @@
 package org.sinnergia.sinnergia.spring.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+
+import java.io.File;
 import java.math.BigDecimal;
 
+@JsonSerialize
 public class ArticleBasicDto {
 
     private String id;
@@ -13,6 +19,8 @@ public class ArticleBasicDto {
     private Integer stock;
 
     private String description;
+
+    private byte[] file;
 
     public ArticleBasicDto() {
         // Empty
@@ -64,6 +72,14 @@ public class ArticleBasicDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
     }
 
     @Override

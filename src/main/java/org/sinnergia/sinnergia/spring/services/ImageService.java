@@ -19,6 +19,8 @@ public class ImageService {
 
     public static String basicPath = "src/main/resources/files";
 
+    public static String defaultImageUri = "src/main/resources/files/emptyImage.jpg";
+
     public ImageService() {
         extensions = new ArrayList<String>();
         extensions.add("png");

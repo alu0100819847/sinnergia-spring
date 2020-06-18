@@ -26,6 +26,7 @@ public class Article {
         this.price = price;
         this.stock = 0;
         this.description = description;
+        this.imageName = "";
     }
 
     public String getId() {

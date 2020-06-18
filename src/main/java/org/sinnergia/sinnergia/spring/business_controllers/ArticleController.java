@@ -1,5 +1,6 @@
 package org.sinnergia.sinnergia.spring.business_controllers;
 
+
 import org.sinnergia.sinnergia.spring.documents.Article;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
@@ -9,14 +10,22 @@ import org.sinnergia.sinnergia.spring.exceptions.UnsupportedExtension;
 import org.sinnergia.sinnergia.spring.repositories.ArticleRepository;
 import org.sinnergia.sinnergia.spring.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 public class ArticleController {
@@ -35,7 +44,31 @@ public class ArticleController {
     }
 
     public Flux<ArticleBasicDto> readAllArticles() {
-        return this.articleRepository.findAll().map(article -> new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription()));
+
+        return this.articleRepository.findAll().map(article -> {
+            Path path = Paths.get(ImageService.defaultImageUri);
+            if(!article.getImageName().equals("")){
+                path = Paths.get(article.getImageName());
+            }
+            Resource resource = new FileSystemResource(path.toString());
+
+            ArticleBasicDto articleBasicDto = new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription());
+            if(resource.exists()) {
+                try {
+                    articleBasicDto.setFile(Files.readAllBytes(path));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                path = Paths.get(ImageService.defaultImageUri);
+                try {
+                    articleBasicDto.setFile(Files.readAllBytes(path));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return articleBasicDto;
+        });
     }
 
     public Mono<Void> update(ArticleBasicDto articleBasicDto) {
