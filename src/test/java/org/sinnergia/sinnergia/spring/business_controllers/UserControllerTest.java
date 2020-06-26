@@ -117,8 +117,8 @@ class UserControllerTest {
         StepVerifier
                 .create(this.userController.getToken(new UserLoginDto("tokenTest@example.com", "tokenTest")))
                 .expectNextMatches( token -> {
-                        assertEquals("tokenTest@example.com", this.jwtService.verify(token.getToken()).getClaim("user").asString());
-                        assertEquals(Role.CUSTOMER.toString(), this.jwtService.verify(token.getToken()).getClaim("roles").asList(String.class).get(0));
+                        assertEquals("tokenTest@example.com", this.jwtService.verify("Bearer " + token.getToken()).getClaim("user").asString());
+                        assertEquals(Role.CUSTOMER.toString(), this.jwtService.verify("Bearer " + token.getToken()).getClaim("roles").asList(String.class).get(0));
                         return true;
                     }
                 )

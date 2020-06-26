@@ -1,6 +1,7 @@
 package org.sinnergia.sinnergia.spring.api_rest_controllers;
 
 import org.junit.jupiter.api.Test;
+import org.sinnergia.sinnergia.spring.config.AdminTestService;
 import org.sinnergia.sinnergia.spring.config.ApiTestConfig;
 import org.sinnergia.sinnergia.spring.documents.Role;
 import org.sinnergia.sinnergia.spring.dto.UserAdminDto;
@@ -29,7 +30,8 @@ class UserResourceTest {
     @Autowired
     private WebTestClient webTestClient;
 
-
+    @Autowired
+    private AdminTestService adminTestService;
 
     @Test
     void testRegisterLandingUser(){
@@ -58,7 +60,7 @@ class UserResourceTest {
                 .post().uri(UserResource.USERS+ UserResource.LANDING)
                 .body(BodyInserters.fromValue(new UserLandingDto("apiLandingUserRepeated@example.com", roles)))
                 .exchange()
-                .expectStatus().is5xxServerError();
+                .expectStatus().is4xxClientError();
 
         this.deleteAll(userLandingDto.getEmail());
     }
@@ -137,7 +139,7 @@ class UserResourceTest {
                 .post().uri(UserResource.USERS)
                 .body(BodyInserters.fromValue(new UserLoginDto("testLoginApiCredentialException@example.com", "test1Login")))
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().is4xxClientError()
                 .expectBody(CredentialException.class)
                 .value(error ->{
                     assertEquals(new CredentialException("Credential Exception (401). User or Password incorrect.").getMessage(), error.getMessage());
@@ -175,7 +177,7 @@ class UserResourceTest {
                 .exchange()
                 .expectStatus().isOk();
 
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .get().uri(UserResource.USERS)
                 .exchange()
                 .expectStatus().isOk();
@@ -193,7 +195,7 @@ class UserResourceTest {
                 .expectStatus().isOk();
 
         UserAdminDto userAdminDto =
-                webTestClient
+                this.adminTestService.login(webTestClient)
                     .get().uri(UserResource.USERS)
                     .exchange()
                     .expectStatus().isOk()
@@ -205,7 +207,7 @@ class UserResourceTest {
         userAdminDto.setName("updateUser");
         userAdminDto.setSurname("in Api");
 
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .put().uri(UserResource.USERS)
                 .body(BodyInserters.fromValue(userAdminDto))
                 .exchange()
@@ -224,7 +226,7 @@ class UserResourceTest {
                 .expectStatus().isOk();
 
         UserAdminDto userAdminDto =
-                webTestClient
+                this.adminTestService.login(webTestClient)
                         .get().uri(UserResource.USERS)
                         .exchange()
                         .expectStatus().isOk()
@@ -238,13 +240,13 @@ class UserResourceTest {
                 .put().uri(UserResource.USERS)
                 .body(BodyInserters.fromValue(userAdminDto))
                 .exchange()
-                .expectStatus().is5xxServerError();
+                .expectStatus().is4xxClientError();
         this.deleteAll(userAdminDto.getEmail());
     }
 
     void deleteAll(String... emails){
         for(String email : emails){
-            webTestClient
+            this.adminTestService.login(webTestClient)
                     .delete().uri(UserResource.USERS + "/" + email)
                     .exchange()
                     .expectStatus().isOk();

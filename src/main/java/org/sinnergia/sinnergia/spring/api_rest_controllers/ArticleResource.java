@@ -7,6 +7,7 @@ import org.sinnergia.sinnergia.spring.dto.ArticleCreateImageDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleUpdateImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(ArticleResource.ARTICLE)
+
 public class ArticleResource {
     public static final String ARTICLE ="/article";
     private static final String ID = "/{id}";
@@ -31,6 +33,7 @@ public class ArticleResource {
         return this.articleController.readAllArticles();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<Void> updateArticleImage(@Valid @ModelAttribute ArticleUpdateImageDto articleUpdateImageDto){
         if(articleUpdateImageDto.getFile() != null){
@@ -40,6 +43,7 @@ public class ArticleResource {
 
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<Void> createArticle(@Valid @ModelAttribute ArticleCreateImageDto articleCreateImageDto) {
         if(articleCreateImageDto.getFile() != null){
@@ -49,6 +53,7 @@ public class ArticleResource {
 
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping(value= ID)
     public Mono<Void> deleteUser(@PathVariable String id){
         return this.articleController.delete(id);

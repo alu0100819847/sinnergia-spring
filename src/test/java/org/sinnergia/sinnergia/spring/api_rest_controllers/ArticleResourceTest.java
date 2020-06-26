@@ -1,6 +1,7 @@
 package org.sinnergia.sinnergia.spring.api_rest_controllers;
 
 import org.junit.jupiter.api.Test;
+import org.sinnergia.sinnergia.spring.config.AdminTestService;
 import org.sinnergia.sinnergia.spring.config.ApiTestConfig;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,13 @@ class ArticleResourceTest {
 
     @Autowired
     private WebTestClient webTestClient;
+    @Autowired
+    private AdminTestService adminTestService;
 
     @Test
     void testCreateArticle() {
 
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .post().uri(ArticleResource.ARTICLE)
                 .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("TestName", 17, 14, null)))
                 .exchange()
@@ -45,12 +48,12 @@ class ArticleResourceTest {
 
     @Test
     void testReadAllArticles() {
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .post().uri(ArticleResource.ARTICLE)
                 .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingCreateArticle", 14, 17, null) ))
                 .exchange()
                 .expectStatus().isOk();
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .post().uri(ArticleResource.ARTICLE)
                 .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingCreateArticle", 14, 17, null) ))
                 .exchange()
@@ -67,7 +70,7 @@ class ArticleResourceTest {
 
     @Test
     void testUpdateArticle(){
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .post().uri(ArticleResource.ARTICLE)
                 .body(BodyInserters.fromMultipartData(this.buildFormDataforCreate("testingUpdatingArticle", 14, 17, null) ))
                 .exchange()
@@ -84,7 +87,7 @@ class ArticleResourceTest {
         assertNotNull(articleBasicDto);
 
         articleBasicDto.setDescription("Esto es un test.");
-        webTestClient
+        this.adminTestService.login(webTestClient)
                 .put().uri(ArticleResource.ARTICLE)
                 .body(BodyInserters.fromMultipartData(buildFormDataforUpdate(articleBasicDto, null)))
                 .exchange()
@@ -115,7 +118,7 @@ class ArticleResourceTest {
                         .getResponseBody();
         assertNotNull(articleBasicDto);
         for(ArticleBasicDto article : articleBasicDto){
-            webTestClient
+            this.adminTestService.login(webTestClient)
                     .delete().uri(ArticleResource.ARTICLE + "/" + article.getId())
                     .exchange()
                     .expectStatus().isOk();
