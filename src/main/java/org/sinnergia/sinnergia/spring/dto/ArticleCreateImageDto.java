@@ -12,8 +12,8 @@ public class ArticleCreateImageDto extends ArticleCreateDto{
     public ArticleCreateImageDto() {
     }
 
-    public ArticleCreateImageDto(@NotNull String name, BigDecimal price, Integer stock, String description, MultipartFile file) {
-        super(name, price, stock, description);
+    public ArticleCreateImageDto(@NotNull String name, BigDecimal price, Integer stock, String description, String categoryId, MultipartFile file) {
+        super(name, price, stock, description, categoryId);
         this.file = file;
     }
 

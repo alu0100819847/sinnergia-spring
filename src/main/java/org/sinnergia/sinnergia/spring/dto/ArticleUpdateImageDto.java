@@ -11,7 +11,7 @@ public class ArticleUpdateImageDto extends ArticleCreateImageDto {
     String id;
 
     public ArticleUpdateImageDto(@NotNull String name, BigDecimal price, Integer stock, String description, MultipartFile file, @NotNull String id) {
-        super(name, price, stock, description, file);
+        super(name, price, stock, description, null, file);
         this.id = id;
     }
 

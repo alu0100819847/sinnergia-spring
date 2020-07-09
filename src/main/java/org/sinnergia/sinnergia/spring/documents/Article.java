@@ -1,6 +1,7 @@
 package org.sinnergia.sinnergia.spring.documents;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 
@@ -19,6 +20,9 @@ public class Article {
     private String description;
 
     private String imageName;
+
+    @DBRef(lazy = true)
+    private Category category;
 
     public Article(String name, BigDecimal price, String description) {
         this.name = name;
@@ -74,6 +78,15 @@ public class Article {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override

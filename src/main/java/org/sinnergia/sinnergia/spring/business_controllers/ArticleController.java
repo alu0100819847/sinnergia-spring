@@ -2,11 +2,14 @@ package org.sinnergia.sinnergia.spring.business_controllers;
 
 
 import org.sinnergia.sinnergia.spring.documents.Article;
+import org.sinnergia.sinnergia.spring.documents.Category;
 import org.sinnergia.sinnergia.spring.dto.ArticleBasicDto;
 import org.sinnergia.sinnergia.spring.dto.ArticleCreateDto;
+import org.sinnergia.sinnergia.spring.dto.ArticleUpdateDto;
 import org.sinnergia.sinnergia.spring.exceptions.NotFoundException;
 import org.sinnergia.sinnergia.spring.exceptions.UnsupportedExtension;
 import org.sinnergia.sinnergia.spring.repositories.ArticleRepository;
+import org.sinnergia.sinnergia.spring.repositories.CategoryRepository;
 import org.sinnergia.sinnergia.spring.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -24,16 +27,24 @@ import java.nio.file.Paths;
 public class ArticleController {
 
     private ArticleRepository articleRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    public ArticleController(ArticleRepository articleRepository) {
+    public ArticleController(ArticleRepository articleRepository, CategoryRepository categoryRepository) {
         this.articleRepository = articleRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Mono<Void> createArticle(ArticleCreateDto articleCreateDto) {
-        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice(), articleCreateDto.getDescription());
-        article.setStock(articleCreateDto.getStock());
-        return this.articleRepository.save(article).then();
+
+        Mono<Article> articleMono = this.searchCategory(articleCreateDto.getCategoryId())
+                .map(category -> {
+                    Article article = this.buildArticle(articleCreateDto);
+                    article.setCategory(category);
+                    return article;
+                })
+                .switchIfEmpty(Mono.just(this.buildArticle(articleCreateDto)));
+        return this.articleRepository.saveAll(articleMono).then();
     }
 
     public Flux<ArticleBasicDto> readAllArticles() {
@@ -44,8 +55,7 @@ public class ArticleController {
                 path = Paths.get(article.getImageName());
             }
             Resource resource = new FileSystemResource(path.toString());
-
-            ArticleBasicDto articleBasicDto = new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription());
+            ArticleBasicDto articleBasicDto = new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription(), article.getCategory());
             if(resource.exists()) {
                 try {
                     articleBasicDto.setFile(Files.readAllBytes(path));
@@ -64,27 +74,34 @@ public class ArticleController {
         });
     }
 
-    public Mono<Void> update(ArticleBasicDto articleBasicDto) {
-        Mono<Article> updateArticle = this.articleRepository.findById(articleBasicDto.getId())
-                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleBasicDto.getId())))
+    public Mono<Void> update(ArticleUpdateDto articleUpdateDto) {
+        Mono<Article> updateArticle = this.articleRepository.findById(articleUpdateDto.getId())
+                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleUpdateDto.getId())))
                 .map(article -> {
-                    article.setName(articleBasicDto.getName());
-                    article.setPrice(articleBasicDto.getPrice());
-                    article.setStock(articleBasicDto.getStock());
-                    article.setDescription(articleBasicDto.getDescription());
+                    article.setName(articleUpdateDto.getName());
+                    article.setPrice(articleUpdateDto.getPrice());
+                    article.setStock(articleUpdateDto.getStock());
+                    article.setDescription(articleUpdateDto.getDescription());
+                    article.setCategory(null);
                     return article;
                 });
+        Mono<Category> categoryMono = this.searchCategory(articleUpdateDto.getCategoryId());
+        updateArticle = Flux.combineLatest(categoryMono, updateArticle, (category, article) -> {
+            article.setCategory(category);
+            return article;
+        }).next().switchIfEmpty(updateArticle);
+
         return this.articleRepository.saveAll(updateArticle).then();
     }
 
-    public Mono<Void> updateWithImage(ArticleBasicDto articleBasicDto, MultipartFile file) {
-        Mono<Article> updateArticle = this.articleRepository.findById(articleBasicDto.getId())
-                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleBasicDto.getId())))
+    public Mono<Void> updateWithImage(ArticleUpdateDto articleUpdateDto, MultipartFile file) {
+        Mono<Article> updateArticle = this.articleRepository.findById(articleUpdateDto.getId())
+                .switchIfEmpty(Mono.error(new NotFoundException("Article id " + articleUpdateDto.getId())))
                 .map(article -> {
-                    article.setName(articleBasicDto.getName());
-                    article.setPrice(articleBasicDto.getPrice());
-                    article.setStock(articleBasicDto.getStock());
-                    article.setDescription(articleBasicDto.getDescription());
+                    article.setName(articleUpdateDto.getName());
+                    article.setPrice(articleUpdateDto.getPrice());
+                    article.setStock(articleUpdateDto.getStock());
+                    article.setDescription(articleUpdateDto.getDescription());
                     ImageService imageService = new ImageService();
                     String src = imageService.getPath(article.getId(), file.getOriginalFilename());
                     article.setImage(src);
@@ -95,6 +112,11 @@ public class ArticleController {
                     }
                     return article;
                 });
+        Mono<Category> categoryMono = this.searchCategory(articleUpdateDto.getCategoryId());
+        updateArticle = Flux.combineLatest(categoryMono, updateArticle, (category, article) -> {
+            article.setCategory(category);
+            return article;
+        }).next().switchIfEmpty(updateArticle);
         return this.articleRepository.saveAll(updateArticle).then();
     }
 
@@ -104,9 +126,15 @@ public class ArticleController {
 
     public Mono<Void> createArticleImage(ArticleCreateDto articleCreateDto, MultipartFile file) {
         ImageService imageService = new ImageService();
-        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice(), articleCreateDto.getDescription());
-        article.setStock(articleCreateDto.getStock());
-        Mono<Article> monoArticle = this.articleRepository.save(article).map(articleSaved -> {
+        Mono<Article> articleMono = this.searchCategory(articleCreateDto.getCategoryId())
+                .map(category -> {
+                    Article article = this.buildArticle(articleCreateDto);
+                    article.setCategory(category);
+                    return article;
+                })
+                .switchIfEmpty(Mono.just(this.buildArticle(articleCreateDto)));
+
+        Mono<Article> articleMonoComplete = this.articleRepository.saveAll(articleMono).map(articleSaved -> {
             String src = imageService.getPath(articleSaved.getId(), file.getOriginalFilename());
             articleSaved.setImage(src);
             try{
@@ -114,12 +142,49 @@ public class ArticleController {
             } catch (IOException error){
                 throw new UnsupportedExtension("No se ha podido procesar la imagen.");
             }
-            return article;
-        });
+            return articleSaved;
+        }).next();
 
-        return this.articleRepository.saveAll(monoArticle).then();
+        return this.articleRepository.saveAll(articleMonoComplete).then();
     }
 
+    private Mono<Category> searchCategory(String categoryId){
+        return this.categoryRepository.findById(categoryId);
+    }
+
+    private Article buildArticle(ArticleCreateDto articleCreateDto){
+        Article article = new Article(articleCreateDto.getName(), articleCreateDto.getPrice(), articleCreateDto.getDescription());
+        article.setStock(articleCreateDto.getStock());
+        return article;
+    }
+
+    public Flux<ArticleBasicDto> readByCategory(String category) {
+        Mono<Category> categoryMono = this.categoryRepository.findOneByName(category);
+        return this.articleRepository.findAllByCategory(categoryMono).map(article -> {
+            Path path = Paths.get(ImageService.defaultImageUri);
+            if(!article.getImageName().equals("")){
+                path = Paths.get(article.getImageName());
+            }
+            Resource resource = new FileSystemResource(path.toString());
+
+            ArticleBasicDto articleBasicDto = new ArticleBasicDto(article.getId(), article.getName(), article.getPrice(), article.getStock(), article.getDescription(), article.getCategory());
+            if(resource.exists()) {
+                try {
+                    articleBasicDto.setFile(Files.readAllBytes(path));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                path = Paths.get(ImageService.defaultImageUri);
+                try {
+                    articleBasicDto.setFile(Files.readAllBytes(path));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return articleBasicDto;
+        });
+    }
 }
 
 

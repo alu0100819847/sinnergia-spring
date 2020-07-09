@@ -14,15 +14,18 @@ public class ArticleCreateDto {
 
     private String description;
 
+    private String categoryId;
+
     public ArticleCreateDto() {
         // Empty
     }
 
-    public ArticleCreateDto(@NotNull String name, BigDecimal price, Integer stock, String description) {
+    public ArticleCreateDto(@NotNull String name, BigDecimal price, Integer stock, String description, String categoryId) {
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.description = description;
+        this.categoryId = categoryId;
     }
 
     public BigDecimal getPrice() {
@@ -57,6 +60,14 @@ public class ArticleCreateDto {
         this.description = description;
     }
 
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public String toString() {
         return "ArticleCreateDto{" +
@@ -64,6 +75,7 @@ public class ArticleCreateDto {
                 ", price=" + price +
                 ", stock=" + stock +
                 ", description='" + description + '\'' +
+                ", categoryId='" + categoryId + '\'' +
                 '}';
     }
 }
