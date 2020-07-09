@@ -15,9 +15,9 @@ public class ImageService {
 
     Path path;
 
-    public static final String basicPath = "src/main/resources/files";
+    public static final String BASIC_PATH = "src/main/resources/files";
 
-    public static final String defaultImageUri = "src/main/resources/files/emptyImage.jpg";
+    public static final String DEFAULT_IMAGE_URI = "src/main/resources/files/emptyImage.jpg";
 
     public ImageService() {
         extensions = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ImageService {
 
     public String getPath(String name, String fileName){
         String extension = getImageExtension(fileName);
-        this.path = FileSystems.getDefault().getPath(ImageService.basicPath, name + "." + extension);
+        this.path = FileSystems.getDefault().getPath(ImageService.BASIC_PATH, name + "." + extension);
         return this.path.toString();
     }
 

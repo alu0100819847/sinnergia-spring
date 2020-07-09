@@ -50,7 +50,7 @@ public class ArticleController {
     public Flux<ArticleBasicDto> readAllArticles() {
 
         return this.articleRepository.findAll().map(article -> {
-            Path path = Paths.get(ImageService.defaultImageUri);
+            Path path = Paths.get(ImageService.DEFAULT_IMAGE_URI);
             if(!article.getImageName().equals("")){
                 path = Paths.get(article.getImageName());
             }
@@ -63,7 +63,7 @@ public class ArticleController {
                     e.printStackTrace();
                 }
             } else {
-                path = Paths.get(ImageService.defaultImageUri);
+                path = Paths.get(ImageService.DEFAULT_IMAGE_URI);
                 try {
                     articleBasicDto.setFile(Files.readAllBytes(path));
                 } catch (IOException e) {
@@ -161,7 +161,7 @@ public class ArticleController {
     public Flux<ArticleBasicDto> readByCategory(String category) {
         Mono<Category> categoryMono = this.categoryRepository.findOneByName(category);
         return this.articleRepository.findAllByCategory(categoryMono).map(article -> {
-            Path path = Paths.get(ImageService.defaultImageUri);
+            Path path = Paths.get(ImageService.DEFAULT_IMAGE_URI);
             if(!article.getImageName().equals("")){
                 path = Paths.get(article.getImageName());
             }
@@ -175,7 +175,7 @@ public class ArticleController {
                     e.printStackTrace();
                 }
             } else {
-                path = Paths.get(ImageService.defaultImageUri);
+                path = Paths.get(ImageService.DEFAULT_IMAGE_URI);
                 try {
                     articleBasicDto.setFile(Files.readAllBytes(path));
                 } catch (IOException e) {

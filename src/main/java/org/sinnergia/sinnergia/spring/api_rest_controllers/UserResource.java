@@ -22,20 +22,13 @@ public class UserResource {
     public static final String REGISTER = "/register";
     public static final String EMAIL ="/{email}";
     private UserController userController;
-    private SeederService seederService;
 
 
     @Autowired
-    public UserResource(UserController userController, SeederService seederService) {
+    public UserResource(UserController userController) {
         this.userController = userController;
-        this.seederService = seederService;
     }
-/*
-    @PostConstruct
-    private void constructor(){
-        this.seederService.initialize();
-    }
-*/
+
     @PostMapping(value= LANDING)
     public Mono<UserLandingDto> registerLandingUser(@Valid @RequestBody UserLandingDto userLandingDto){
         return this.userController.registerFromLanding(userLandingDto);

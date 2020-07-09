@@ -1,11 +1,13 @@
 package org.sinnergia.sinnergia.spring.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public class ArticleCreateDto {
 
     @NotNull
+    @Size(min = 1)
     private String name;
 
     private BigDecimal price;
@@ -17,7 +19,7 @@ public class ArticleCreateDto {
     private String categoryId;
 
     public ArticleCreateDto() {
-        // Empty
+        this.name = "";
     }
 
     public ArticleCreateDto(@NotNull String name, BigDecimal price, Integer stock, String description, String categoryId) {
